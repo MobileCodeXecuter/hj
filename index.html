@@ -3,7 +3,49 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Real-Time Two-Section Editor</title>
+    <title>Stylish Two-Section Editor</title>
+    <script type="module">
+        // Import Firebase SDKs
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
+        import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
+
+        // Your Firebase Configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyA2NDFgWLDdS5-iBfpeHz0jXv4RE2dzyFs",
+            authDomain: "skdokxmf.firebaseapp.com",
+            projectId: "skdokxmf",
+            storageBucket: "skdokxmf.firebasestorage.app",
+            messagingSenderId: "55084533645",
+            appId: "1:55084533645:web:2f71ce2f8e67ec9fecdfc4",
+            measurementId: "G-PP499W8Y08"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        // Function to load text from Firestore
+        async function loadText(sectionId, textAreaId) {
+            const docRef = doc(db, "messages", sectionId);
+            const docSnap = await getDoc(docRef);
+            if (docSnap.exists()) {
+                document.getElementById(textAreaId).value = docSnap.data().text;
+            }
+        }
+
+        // Function to save text to Firestore
+        async function saveText(sectionId, textAreaId) {
+            const textValue = document.getElementById(textAreaId).value;
+            await setDoc(doc(db, "messages", sectionId), { text: textValue });
+        }
+
+        // Load text on page load
+        window.onload = function() {
+            loadText("section1", "textArea1");
+            loadText("section2", "textArea2");
+        };
+    </script>
+
     <style>
         body {
             font-family: 'Arial', sans-serif;
@@ -71,82 +113,25 @@
             }
         }
     </style>
-    <!-- Firebase SDK -->
-    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js"></script>
 </head>
 <body>
 
     <header>
-        <h2>Real-Time Two-Section Editor</h2>
+        <h2>Stylish Two-Section Editor</h2>
     </header>
 
     <div class="container">
         <div class="section">
             <h3>Section 1</h3>
             <textarea id="textArea1" placeholder="Type your text here..."></textarea>
-            <button onclick="saveText('textArea1', 'section1')">Save Section 1</button>
+            <button onclick="saveText('section1', 'textArea1')">Save Section 1</button>
         </div>
         <div class="section">
             <h3>Section 2</h3>
             <textarea id="textArea2" placeholder="Type your text here..."></textarea>
-            <button onclick="saveText('textArea2', 'section2')">Save Section 2</button>
+            <button onclick="saveText('section2', 'textArea2')">Save Section 2</button>
         </div>
     </div>
-
-    <script>
-        // Firebase Configuration - Replace with your own Firebase project details
-        const firebaseConfig = {
-// Import the functions you need from the SDKs you need
-import { initializeApp } from "firebase/app";
-import { getAnalytics } from "firebase/analytics";
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
-
-// Your web app's Firebase configuration
-// For Firebase JS SDK v7.20.0 and later, measurementId is optional
-const firebaseConfig = {
-  apiKey: "AIzaSyA2NDFgWLDdS5-iBfpeHz0jXv4RE2dzyFs",
-  authDomain: "skdokxmf.firebaseapp.com",
-  projectId: "skdokxmf",
-  storageBucket: "skdokxmf.firebasestorage.app",
-  messagingSenderId: "55084533645",
-  appId: "1:55084533645:web:2f71ce2f8e67ec9fecdfc4",
-  measurementId: "G-PP499W8Y08"
-};
-
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
-const analytics = getAnalytics(app);
-        };
-
-        // Initialize Firebase
-        const app = firebase.initializeApp(firebaseConfig);
-        const db = firebase.firestore();
-
-        // Function to save text to Firestore
-        function saveText(textAreaId, section) {
-            const text = document.getElementById(textAreaId).value;
-            db.collection("messages").doc(section).set({ text })
-                .then(() => console.log(`Saved ${section} successfully`))
-                .catch(error => console.error("Error saving:", error));
-        }
-
-        // Function to load text in real-time
-        function loadText(section, textAreaId) {
-            db.collection("messages").doc(section)
-                .onSnapshot(doc => {
-                    if (doc.exists) {
-                        document.getElementById(textAreaId).value = doc.data().text;
-                    }
-                });
-        }
-
-        // Load text from Firestore on page load
-        loadText("section1", "textArea1");
-        loadText("section2", "textArea2");
-
-    </script>
 
 </body>
 </html>
